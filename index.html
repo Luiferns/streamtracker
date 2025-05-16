@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OOTR Tracker</title>
   <style>
     body {
@@ -20,34 +19,73 @@
       cursor: pointer;
     }
   </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
   <h1>OOTR Tracker</h1>
   <div class="tracker">
-    <div class="item" onclick="toggleItem(this)">
+    <div class="item" data-item="Bow">
       <img src="imagens/Bow.png" alt="Bow"
            data-on="imagens/Bow_on.png" data-off="imagens/Bow.png">
     </div>
-
-    <div class="item" onclick="toggleItem(this)">
+    <div class="item" data-item="Boomerang">
       <img src="imagens/Boomerang.png" alt="Boomerang"
            data-on="imagens/Boomerang_on.png" data-off="imagens/Boomerang.png">
     </div>
   </div>
 
   <script>
+    // 🔁 Cole aqui o seu firebaseConfig:
+    const firebaseConfig = {
+      apiKey: "AIzaSyAR8W9nTmHmAyI_czf4tAaHQYyclnpaXOo",
+      authDomain: "ootr-tracker-e1fc5.firebaseapp.com",
+      databaseURL: "https://ootr-tracker-e1fc5-default-rtdb.firebaseio.com/",
+      projectId: "ootr-tracker-e1fc5",
+      storageBucket: "ootr-tracker-e1fc5.firebasestorage.app",
+      messagingSenderId: "916634883239",
+      appId: "1:916634883239:web:64ca603c5193bca42f3782"
+    };
+
+    // Inicializa Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Função para atualizar imagem ao clicar
     function toggleItem(element) {
+      const itemName = element.getAttribute('data-item');
       const img = element.querySelector('img');
       const currentSrc = img.getAttribute('src');
       const onSrc = img.getAttribute('data-on');
       const offSrc = img.getAttribute('data-off');
+      const isOn = currentSrc === onSrc;
 
-      if (currentSrc === offSrc) {
-        img.setAttribute('src', onSrc);
-      } else {
-        img.setAttribute('src', offSrc);
-      }
+      db.ref('itens/' + itemName).set(!isOn); // salva o novo estado
     }
+
+    // Atualiza o visual com base no banco
+    function syncState() {
+      const items = document.querySelectorAll('.item');
+      items.forEach((item) => {
+        const itemName = item.getAttribute('data-item');
+        const img = item.querySelector('img');
+        const onSrc = img.getAttribute('data-on');
+        const offSrc = img.getAttribute('data-off');
+
+        // Escuta o banco em tempo real
+        db.ref('itens/' + itemName).on('value', (snapshot) => {
+          const isOn = snapshot.val();
+          img.src = isOn ? onSrc : offSrc;
+        });
+
+        // Liga o clique
+        item.onclick = () => toggleItem(item);
+      });
+    }
+
+    syncState();
   </script>
 </body>
 </html>
