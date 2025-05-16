@@ -25,23 +25,30 @@
   <h1>OOTR Tracker</h1>
   <div class="tracker">
     <div class="item" onclick="toggleItem(this)">
-  <img src="imagens/Bow.png" alt="Bow"
-       data-on="imagens/Bow_on.png" data-off="imagens/Bow.png">
-  <p>Bow</p>
-</div>
+      <img src="imagens/Bow.png" alt="Bow"
+           data-on="imagens/Bow_on.png" data-off="imagens/Bow.png">
+      <p>Bow</p>
+    </div>
 
     <div class="item" onclick="toggleItem(this)">
-      <img src="imagens/Boomerang.png" alt="Boomerang" class="inactive">
+      <img src="imagens/Boomerang.png" alt="Boomerang"
+           data-on="imagens/Boomerang_on.png" data-off="imagens/Boomerang.png">
       <p>Boomerang</p>
     </div>
-    <!-- Adicione mais itens aqui -->
   </div>
 
   <script>
     function toggleItem(element) {
       const img = element.querySelector('img');
-      img.classList.toggle('active');
-      img.classList.toggle('inactive');
+      const currentSrc = img.getAttribute('src');
+      const onSrc = img.getAttribute('data-on');
+      const offSrc = img.getAttribute('data-off');
+
+      if (currentSrc === offSrc) {
+        img.setAttribute('src', onSrc);
+      } else {
+        img.setAttribute('src', offSrc);
+      }
     }
   </script>
 </body>
