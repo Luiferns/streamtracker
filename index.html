@@ -236,16 +236,16 @@
     const db = firebase.database();
 
     // Função para atualizar imagem ao clicar
-    function toggleItem(element) {
-      const itemName = element.getAttribute('data-item');
-      const img = element.querySelector('img');
-      const currentSrc = img.getAttribute('src');
-      const onSrc = img.getAttribute('data-on');
-      const offSrc = img.getAttribute('data-off');
-      const isOn = currentSrc === onSrc;
+    function toggleItem(element) {
+      const itemName = element.getAttribute('data-item');
+      const img = element.querySelector('img');
+      const currentSrc = img.getAttribute('src');
+      const offSrc = img.getAttribute('data-off');
 
-      db.ref('itens/' + itemName).set(!isOn); // salva o novo estado
-    }
+      const isOn = currentSrc !== offSrc; // Verifica se a imagem atual é diferente da imagem "off"
+
+      db.ref('itens/' + itemName).set(!isOn); // Salva o estado oposto
+    }
 
     // Atualiza o visual com base no banco
     function syncState() {
